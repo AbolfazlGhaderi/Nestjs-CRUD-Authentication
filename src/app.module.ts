@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserEntity } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: 'root',
       password: '',
       database: 'nestjs-crud',
-      entities: [],
+      entities: [UserEntity],
       synchronize: true,
     }),
     UsersModule,
