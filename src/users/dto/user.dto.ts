@@ -20,7 +20,20 @@ export class UserDto {
     password:string
 
     @IsEnum(["Admin","User"],{message:"The Role must be Admin or User"})
-    role?:string
+    role:string
     
+}
+
+export type TUser={
+
+    firstName: string;
+
+    lastName: string;
+
+    email: string;
+
+    password:string
+
+    role:string
 }
 

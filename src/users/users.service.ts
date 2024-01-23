@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { UserDto } from './dto/user.dto';
+import { TUser, UserDto } from './dto/user.dto';
 import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -11,17 +11,17 @@ export class UsersService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async create(userData: UserDto) {
-    const user = await this.userRepository.findOne({
-      where: { email: userData.email },
-    });
-    if (user)
-      throw new HttpException('User already exists', 400);
-    
+  async create(userData: TUser) {
+    console.log(userData);
     const newUser= this.userRepository.create(userData)
     return await this.userRepository.save(newUser)
   }
 
+  async findUserByEmail(email: string) {
+    return await this.userRepository.findOne({
+      where: { email: email },
+    });
+  }
   // findAll() {
   //   return `This action returns all users`;
   // }
