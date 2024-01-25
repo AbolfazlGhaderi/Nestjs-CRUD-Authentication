@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'otpcode' })
 export class OTPCode {
@@ -11,6 +11,6 @@ export class OTPCode {
   @Column()
   code:string
 
-  @Column({type:'boolean',default:false})
-  isused:boolean
+  @CreateDateColumn()
+  createat:Date
 }
