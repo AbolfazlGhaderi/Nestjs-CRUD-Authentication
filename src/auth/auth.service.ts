@@ -19,7 +19,6 @@ export class AuthService {
   ) {}
 
   async register(registerData: TRegister) {
-
     //-------------------- User Search in the DB -------------------
 
     const user = await this.usersService.findUserByEmail(registerData.email);
@@ -28,15 +27,14 @@ export class AuthService {
     //-------------------- hash password ---------------------------
 
     registerData.password = await bcrypt.hash(registerData.password, 10);
-    
+
     const SavedUser = await this.usersService.create(registerData);
-    if(!SavedUser) throw new HttpException('Error Save User', 400)
+    if (!SavedUser) throw new HttpException('Error Save User', 400);
 
     return {
       statusCode: 201,
-      message: "User created successfully", 
+      message: 'User created successfully',
     };
-
   }
 
   async login(loginData: LoginDto) {
@@ -68,7 +66,6 @@ export class AuthService {
 
   async Otplogin(otpLoginData: OTPLoginDto) {
     if (!otpLoginData.code) {
-
       // -------------- user search in the DB -----------------------------
 
       const user = await this.usersService.findUserByEmail(otpLoginData.email);
@@ -76,12 +73,14 @@ export class AuthService {
 
       // -------------- Remove previous code from DB -------------------------------
 
-      await this.otpCodeRepository.delete({ email: otpLoginData.email })
+      await this.otpCodeRepository.delete({ email: otpLoginData.email });
 
       //--------------- Generate OTP Code  -------------------------
 
-      const otpCode = (Math.floor(Math.random() * (99999 - 10000)) + 10000 ).toString();
-      
+      const otpCode = (
+        Math.floor(Math.random() * (99999 - 10000)) + 10000
+      ).toString();
+
       // -------------- Create templateParams -----------------------------
 
       const templateParams = {
@@ -91,9 +90,9 @@ export class AuthService {
       // -------------- Send Email ----------------------------------------
 
       return await emailJs
-        .send('service_8k546pv', 'template_8sjay6v', templateParams, {
-          publicKey: 'TDxJOjwqfqrW3Fcl3',
-          privateKey: 'cHgAoNJnHusppAMia630L',
+        .send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams, {
+          publicKey: 'YOUR_PUBLIC_KEY',
+          privateKey: 'YOUR_PRIVATE_KEY',
         })
         .then(async (response) => {
           console.log(
@@ -107,14 +106,13 @@ export class AuthService {
           const SavedCode = await this.otpCodeRepository.insert({
             email: otpLoginData.email,
             code: otpCode,
-          })
-          if(!SavedCode) throw new HttpException('Error Save Code', 400)
+          });
+          if (!SavedCode) throw new HttpException('Error Save Code', 400);
 
           return {
-            message:"Email sent successfully",
-            email: otpLoginData.email,  
-          }
-          
+            message: 'Email sent successfully',
+            email: otpLoginData.email,
+          };
         })
 
         //----------- Handel Error Send Email ------------------------
@@ -122,7 +120,37 @@ export class AuthService {
           console.log(err);
           throw new HttpException('Error Send Email', 400);
         });
-      
-    } else return otpLoginData.code;
+    } else {
+      // -------------- code search in the DB -----------------------------
+
+      const resultSearchOtpCode = await this.otpCodeRepository.findOne({
+        where: {
+          email: otpLoginData.email,
+          code: otpLoginData.code,
+        },
+      });
+      if (!resultSearchOtpCode) throw new HttpException('Wrong Code', 400);
+
+      // -------------- Remove previous code from DB ----------------------
+
+      await this.otpCodeRepository.delete({ email: otpLoginData.email });
+
+      // -------------- Return User of the DB -----------------------------
+
+      const user = await this.usersService.findUserByEmail(otpLoginData.email);
+
+      //-------------------- Create AccessToken ---------------------------
+
+      const accessToken = this.jwtService.sign({
+        sub: user.id,
+        email: user.email,
+        role: user.role,
+      });
+
+      return {
+        statusCode: 200,
+        AccessToken: accessToken,
+      };
+    }
   }
 }
