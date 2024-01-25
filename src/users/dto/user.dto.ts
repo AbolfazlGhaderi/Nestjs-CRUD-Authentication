@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class UserDto {
   @IsNotEmpty({ message: 'FirstName is Empty !' })
@@ -16,6 +16,7 @@ export class UserDto {
 
   @IsNotEmpty({ message: 'Password is Empty !' })
   @IsString({ message: 'Password must be a string ' })
+  @MinLength(6,{ message: 'Password must be more than 6 digits' })
   password: string;
 
   @IsEnum(['Admin', 'User'], { message: 'The Role must be Admin or User' })

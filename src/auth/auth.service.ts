@@ -4,12 +4,17 @@ import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcryptjs';
 import { TRegister } from './dto/register.dto';
 import { JwtService } from '@nestjs/jwt';
-
+import { InjectRepository } from '@nestjs/typeorm';
+import { OTPCode } from './entities/OTPcode.entity';
+import { Repository } from 'typeorm';
+import { OTPLoginDto } from './dto/otpLogin.dto';
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    @InjectRepository(OTPCode)
+     private readonly otpCode:Repository<OTPCode>
   ) {}
 
   async register(registerData: TRegister) {
@@ -49,5 +54,14 @@ export class AuthService {
       statusCode: 200,
       AccessToken: accessToken,
     };
+  }
+
+  async Otplogin(otpLoginData : OTPLoginDto){
+    if(!otpLoginData.code){
+
+      return otpLoginData.email
+    }
+    else return otpLoginData.code
+
   }
 }
