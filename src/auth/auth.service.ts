@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcryptjs';
@@ -49,10 +49,11 @@ export class AuthService {
       loginData.password,
       user.password,
     );
-    if (!isPasswordMatch) throw new HttpException('Wrong Password', 400);
+    if (!isPasswordMatch) throw new HttpException('Wrong Password', HttpStatus.UNAUTHORIZED);
 
     //-------------------- Create AccessToken ---------------------
-    const accessToken = await this.jwtService.sign({
+    
+    const accessToken = this.jwtService.sign({
       sub: user.id,
       email: user.email,
       role: user.role,
@@ -60,7 +61,7 @@ export class AuthService {
 
     return {
       statusCode: 200,
-      AccessToken: accessToken,
+      accessToken: accessToken,
     };
   }
 
