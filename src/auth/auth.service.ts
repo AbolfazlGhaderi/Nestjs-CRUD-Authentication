@@ -91,9 +91,9 @@ export class AuthService {
       // -------------- Send Email ----------------------------------------
 
       return await emailJs
-        .send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams, {
-          publicKey: 'YOUR_PUBLIC_KEY',
-          privateKey: 'YOUR_PRIVATE_KEY',
+        .send('service_rf3b1w6', 'template_8sjay6v', templateParams, {
+          publicKey: 'ih038vz1z1UOVjO-B',
+          privateKey: '8hoNq84dx4Y6hvdSXXzU3',
         })
         .then(async (response) => {
           console.log(
