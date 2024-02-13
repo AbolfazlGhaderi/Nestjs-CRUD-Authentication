@@ -21,19 +21,8 @@ export class UsersService {
       where: { email: email },
     });
   }
-  // async findAll() {
-  //   return await this.userRepository.find();
-  // }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} user`;
-  // }
-
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
+  async findAllUsers (){
+    return await this.userRepository.find({select:['id','firstName','lastName','email','date_create','date_update','role']});
+  }
 }

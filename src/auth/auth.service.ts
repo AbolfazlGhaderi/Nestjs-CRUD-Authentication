@@ -38,6 +38,7 @@ export class AuthService {
   }
 
   async login(loginData: LoginDto) {
+    
     //-------------------- User Search in the DB -------------------
 
     const user = await this.usersService.findUserByEmail(loginData.email);
@@ -93,7 +94,7 @@ export class AuthService {
       return await emailJs
         .send('service_rf3b1w6', 'template_8sjay6v', templateParams, {
           publicKey: 'ih038vz1z1UOVjO-B',
-          privateKey: '8hoNq84dx4Y6hvdSXXzU3',
+          privateKey: 'ih038vz1z1UOVjO-B',
         })
         .then(async (response) => {
           console.log(

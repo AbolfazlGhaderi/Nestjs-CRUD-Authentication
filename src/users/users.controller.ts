@@ -1,37 +1,47 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  HttpException,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDto } from './dto/user.dto';
 import { JwtAuthGuard } from 'src/Guards/jwtauth.guard';
+import { Request } from 'express';
 
-@Controller('users')
+@Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post("/add-user")
+  @Post('/add-user')
   @UseGuards(JwtAuthGuard)
-  create(@Body() userDto: UserDto) {
+  create(@Body() userDto: UserDto, @Req() request: Request) {
+    console.log(request.user);
     return this.usersService.create(userDto);
   }
 
-  
-  // @Get()
-  // @UseGuards(JwtAuthGuard)
-  // findAll() {
-  //   return this.usersService.findAll()
-  // }
+  @Get('')
+  @UseGuards(JwtAuthGuard)
+  async getAllUser(@Req() request: Request) {
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.usersService.findOne(+id);
-  // }
+    if (request.user['role']  !== 'Admin'){
+      return {
+        message: 'Unauthorized',
+        statusCode: 401,
+      };
+    }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.usersService.update(+id, updateUserDto);
-  // }
+    const users = await this.usersService.findAllUsers();
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.usersService.remove(+id);
-  // }
+    if (!users[0]) throw new HttpException("The user does not exist",404)
+
+
+    return users
+  }
 }

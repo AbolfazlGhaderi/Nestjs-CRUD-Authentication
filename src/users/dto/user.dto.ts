@@ -1,25 +1,26 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class UserDto {
-  @IsNotEmpty({ message: 'FirstName is Empty !' })
-  @IsString({ message: 'ّFirstName must be a string ' })
+  @IsNotEmpty()
+  @IsString()
   firstName: string;
 
-  @IsNotEmpty({ message: 'LastName is Empty !' })
-  @IsString({ message: 'LastName must be a string ' })
+  @IsNotEmpty()
+  @IsString()
   lastName: string;
 
-  @IsNotEmpty({ message: 'Email is Empty !' })
-  @IsString({ message: 'Email must be a string ' })
-  @IsEmail({}, { message: 'The Email Entered is Incorrect' })
+  @IsNotEmpty()
+  @IsString()
+  @IsEmail()
   email: string;
 
-  @IsNotEmpty({ message: 'Password is Empty !' })
-  @IsString({ message: 'Password must be a string ' })
-  @MinLength(6,{ message: 'Password must be more than 6 digits' })
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(6)
   password: string;
 
-  @IsEnum(['Admin', 'User'], { message: 'The Role must be Admin or User' })
+  @IsOptional()
+  @IsEnum(['Admin', 'User'])
   role: string;
 }
 
