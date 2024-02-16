@@ -37,7 +37,7 @@ export class UsersController {
       };
     }
 
-    const users = await this.usersService.findAllUsers();
+    const users = await this.usersService.findAllUsers(request.user['email']);
 
     if (!users[0]) throw new HttpException("The user does not exist",404)
 

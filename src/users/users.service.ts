@@ -22,7 +22,12 @@ export class UsersService {
     });
   }
 
-  async findAllUsers (){
+  async findAllUsers (email:string){
+    
+    const Admin = await this.findUserByEmail(email)
+
+    if(!Admin) throw new HttpException('user not find',404)
+
     return await this.userRepository.find({select:['id','firstName','lastName','email','date_create','date_update','role']});
   }
 }
