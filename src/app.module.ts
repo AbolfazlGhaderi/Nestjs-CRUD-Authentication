@@ -4,9 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './users/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { OTPCode } from './auth/entities/OTPcode.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [
+  imports: [ConfigModule.forRoot({
+    isGlobal: true
+  }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',

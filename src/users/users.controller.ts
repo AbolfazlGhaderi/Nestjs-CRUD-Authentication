@@ -9,33 +9,23 @@ import {
   UseGuards,
   Req,
   HttpException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDto } from './dto/user.dto';
 import { JwtAuthGuard } from 'src/Guards/jwtauth.guard';
 import { Request } from 'express';
+import { roleGuard } from 'src/Guards/role.guard';
 
 @Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('/add-user')
-  @UseGuards(JwtAuthGuard)
-  create(@Body() userDto: UserDto, @Req() request: Request) {
-    console.log(request.user);
-    return this.usersService.create(userDto);
-  }
 
   @Get('')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard,roleGuard)
   async getAllUser(@Req() request: Request) {
 
-    if (request.user['role']  !== 'Admin'){
-      return {
-        message: 'Unauthorized',
-        statusCode: 401,
-      };
-    }
 
     const users = await this.usersService.findAllUsers(request.user['email']);
 
@@ -44,4 +34,19 @@ export class UsersController {
 
     return users
   }
+
+  @Get('whoami')
+  @UseGuards(JwtAuthGuard)
+  async whoami(@Req() request:Request){
+
+    return await this.usersService.whoami(request.user['id'])
+
+  }
+
+  @Delete('/:id')
+  @UseGuards(JwtAuthGuard,roleGuard)
+  deleteUser(@Param('id',ParseIntPipe) id: string) {
+    return this.usersService.deleteUser(id);
+  }
+
 }
