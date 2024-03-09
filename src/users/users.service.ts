@@ -3,6 +3,8 @@ import { TUser, UserDto } from './dto/user.dto';
 import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { UpdateRoleDTO } from './dto/update.role.dto';
+import { UpdateUserDTO } from './dto/update.user';
 
 @Injectable()
 export class UsersService {
@@ -22,6 +24,13 @@ export class UsersService {
     });
   }
 
+  async findUserById(id: string) {
+    const user = await this.userRepository.findOne({
+      where: { id: id },
+    });
+    if (!user) throw new HttpException('user not find', 404);
+    return user;
+  }
   async findAllUsers(email: string) {
     const Admin = await this.findUserByEmail(email);
 
@@ -50,16 +59,25 @@ export class UsersService {
       },
       where: { id: id.toString() },
     });
-    if(!user) throw new HttpException('user not find', 404);
-    return user
+    if (!user) throw new HttpException('user not find', 404);
+    return user;
   }
 
-  async deleteUser(id:string){
-    const deleted = await this.userRepository.delete(id)
-    if(deleted.affected===0) throw new HttpException('user not found', 404);
+  async updateRole(roleData: UpdateRoleDTO, id: string) {
+    const user = await this.findUserById(id);
+
+    user.role = roleData.role;
+    await this.userRepository.save(user);
+    return 'user updated successfully';
+  }
+
+
+  async deleteUser(id: string) {
+    const deleted = await this.userRepository.delete(id);
+    if (deleted.affected === 0) throw new HttpException('user not found', 404);
     return {
-      statuseCode : 200,
-      message : 'user deleted successfully'
-    }
+      statuseCode: 200,
+      message: 'user deleted successfully',
+    };
   }
 }

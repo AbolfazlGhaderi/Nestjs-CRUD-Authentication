@@ -16,37 +16,38 @@ import { UserDto } from './dto/user.dto';
 import { JwtAuthGuard } from 'src/Guards/jwtauth.guard';
 import { Request } from 'express';
 import { roleGuard } from 'src/Guards/role.guard';
+import { UpdateRoleDTO } from './dto/update.role.dto';
 
 @Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-
   @Get('')
-  @UseGuards(JwtAuthGuard,roleGuard)
+  @UseGuards(JwtAuthGuard, roleGuard)
   async getAllUser(@Req() request: Request) {
-
-
     const users = await this.usersService.findAllUsers(request.user['email']);
 
-    if (!users[0]) throw new HttpException("The user does not exist",404)
+    if (!users[0]) throw new HttpException('The user does not exist', 404);
 
-
-    return users
+    return users;
   }
 
   @Get('whoami')
   @UseGuards(JwtAuthGuard)
-  async whoami(@Req() request:Request){
-
-    return await this.usersService.whoami(request.user['id'])
-
+  async whoami(@Req() request: Request) {
+    return await this.usersService.whoami(request.user['id']);
   }
+
+  @Post('/updaterole/:id')
+  @UseGuards(JwtAuthGuard, roleGuard)
+  async updateRole(@Body() roleData: UpdateRoleDTO , @Param('id', ParseIntPipe) id: string) {
+    return await this.usersService.updateRole(roleData,id);
+  }
+
 
   @Delete('/:id')
-  @UseGuards(JwtAuthGuard,roleGuard)
-  deleteUser(@Param('id',ParseIntPipe) id: string) {
+  @UseGuards(JwtAuthGuard, roleGuard)
+  deleteUser(@Param('id', ParseIntPipe) id: string) {
     return this.usersService.deleteUser(id);
   }
-
 }
