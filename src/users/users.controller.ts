@@ -10,6 +10,7 @@ import {
   Req,
   HttpException,
   ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDto } from './dto/user.dto';
@@ -17,6 +18,7 @@ import { JwtAuthGuard } from 'src/Guards/jwtauth.guard';
 import { Request } from 'express';
 import { roleGuard } from 'src/Guards/role.guard';
 import { UpdateRoleDTO } from './dto/update.role.dto';
+import { UpdateUserDTO } from './dto/update.user';
 
 @Controller('user')
 export class UsersController {
@@ -38,12 +40,23 @@ export class UsersController {
     return await this.usersService.whoami(request.user['id']);
   }
 
-  @Post('/updaterole/:id')
+  @Put('/updaterole/:id')
   @UseGuards(JwtAuthGuard, roleGuard)
-  async updateRole(@Body() roleData: UpdateRoleDTO , @Param('id', ParseIntPipe) id: string) {
-    return await this.usersService.updateRole(roleData,id);
+  async updateRole(
+    @Body() roleData: UpdateRoleDTO,
+    @Param('id', ParseIntPipe) id: string,
+  ) {
+    return await this.usersService.updateRole(roleData, id);
   }
 
+  @Put('/:id')
+  @UseGuards(JwtAuthGuard)
+  async updateUser(
+    @Body() userData: UpdateUserDTO,
+    @Param('id', ParseIntPipe) id: string,
+  ) {
+    return await this.usersService.updateUser(userData, id);
+  }
 
   @Delete('/:id')
   @UseGuards(JwtAuthGuard, roleGuard)

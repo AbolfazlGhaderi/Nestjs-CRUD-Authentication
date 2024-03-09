@@ -71,7 +71,18 @@ export class UsersService {
     return 'user updated successfully';
   }
 
+  async updateUser(userData: UpdateUserDTO, id: string) {
+    const user = await this.findUserById(id);
+    if (user.email === userData.email)
+      throw new HttpException('this email is exist', 400);
 
+    for (const key in userData) {
+      user[key] = userData[key];
+    }
+
+    await this.userRepository.save(user)
+    return 'user updated successfully';
+  }
   async deleteUser(id: string) {
     const deleted = await this.userRepository.delete(id);
     if (deleted.affected === 0) throw new HttpException('user not found', 404);
