@@ -12,7 +12,7 @@ import { OTPCode } from './entities/OTPcode.entity';
   imports: [
     JwtModule.registerAsync({
       useFactory: () => ({
-        secret:process.env.JWT_SECRET,
+        secret:process.env.ACCESS_TOKEN_SECRET,
         signOptions: { expiresIn: '2d' },
       }),
     }),

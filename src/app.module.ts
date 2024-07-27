@@ -6,19 +6,20 @@ import { AuthModule } from './auth/auth.module';
 import { OTPCode } from './auth/entities/OTPcode.entity';
 import { ConfigModule } from '@nestjs/config';
 
+
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true
   }),
     TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '',
-      database: 'nestjs-crud',
+      type:'postgres' ,
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       entities: [UserEntity,OTPCode],
-      synchronize: true,
+      synchronize: process.env.NODE_ENV === 'production' ? false : true ,
     }),
     UsersModule,
     AuthModule,

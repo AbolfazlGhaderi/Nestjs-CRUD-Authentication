@@ -7,12 +7,17 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({origin:"*"})
   app.useGlobalPipes(new ValidationPipe())
-  app.use(Session({
-    secret: "Abolfazl",
-  }))
+  app.use(
+    Session({
+      secret:
+        process.env.SESSION_SECRET,
+    }),
+  );
   app.use(Passport.initialize())
   app.use(Passport.session())
-  
-  await app.listen(4000);
+  const PORT = process.env.PORT || 4000;
+  await app.listen(PORT,'0.0.0.0',()=>{
+    console.log('App is Running on Port: ' + PORT);
+  });
 }
 bootstrap();
